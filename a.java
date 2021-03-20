@@ -10,12 +10,9 @@ import java.awt.geom.Point2D;
  */
 class Graph {
     List<Point2D> nodes; // list of nodes (order sorts)
-    List<Point2D> visited; // list of visited nodes (visited)
 
-    Graph(){
-    this.nodes = new ArrayList<Point2D>(); ; 
-    this.visited = new ArrayList<Point2D>();
-
+    Graph() {
+        this.nodes = new ArrayList<Point2D>();
     }
 
     void addNewPoint(double x, double y) {
@@ -25,9 +22,9 @@ class Graph {
     }
 
     void randomPointGenerator(int range) {
-        Random random  = new Random();
+        Random random = new Random();
         // (upperbound-lowerbound) + lowerbound;
-        addNewPoint( (double)random.nextInt(range*2) - range , (double)random.nextInt(range*2) - range);
+        addNewPoint((double) random.nextInt(range * 2) - range, (double) random.nextInt(range * 2) - range);
     }
 
     void printGraph() {
@@ -37,16 +34,49 @@ class Graph {
     }
 
     void printPoint(Point2D point) {
-        System.out.print("(" + point.getX() + ";" + point.getY()  + ")");
+        System.out.println("(" + point.getX() + ";" + point.getY() + ")");
     }
 
-    void randomGenerator() {
-        Collections.shuffle(this.nodes); 
+    void randomPermutation() {
+        Collections.shuffle(this.nodes);
     }
-
 }
 
 public class a {
+
+    public static void nearestNeighbourFirst(Graph g) {
+        List<Point2D> visited = new ArrayList<Point2D>(); // list of visited nodes (visited)
+        List<Point2D> path = new ArrayList<Point2D>(); // list of visited nodes (visited)
+
+        boolean goalFound = false;
+        int index = 0;
+        double minDistance;
+
+        while (!goalFound) {
+            minDistance = Double.MAX_VALUE;
+            Point2D cur = g.nodes.get(index);
+            path.add(cur);
+            visited.add(cur);
+
+            if (visited.size() == g.nodes.size()){ 
+                goalFound = true;
+                continue;
+            }
+
+            for (Point2D K : g.nodes) {
+                if (!visited.contains(K)) {
+                    if (cur.distanceSq(K) < minDistance) {
+                        index = g.nodes.indexOf(K);
+                        minDistance = cur.distanceSq(K);
+                    }
+                }
+            }
+        }
+
+        for (Point2D K : visited) {
+            System.out.println("(" + K.getX() + ";" + K.getY() + ")");
+        }
+    }
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
@@ -57,13 +87,19 @@ public class a {
 
         Graph g = new Graph();
 
-        for (int i  = 0 ; i < size;i++){
+        for (int i = 0; i < size; i++) {
             g.randomPointGenerator(range);
         }
 
-        g.randomGenerator();
+        g.randomPermutation();
 
         g.printGraph();
+
+        System.out.println("Searcing");
+
+        nearestNeighbourFirst(g);
+
+    
 
         scan.close();
     }
