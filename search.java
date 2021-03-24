@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+
 import java.awt.geom.Point2D;
 
 public class search {
@@ -35,9 +36,7 @@ public class search {
                 }
             }
         }
-        for (Point2D K : path) {
-            System.out.println("(" + K.getX() + ";" + K.getY() + ")");
-        }
+        g.nodes = path;
     }
 
     /*
@@ -118,4 +117,97 @@ public class search {
         return intersections;
     }
 
+    private static void swap(Graph g, Point2D a, Point2D b, Point2D c, Point2D d) {
+        int indexB = g.nodes.indexOf(b);
+        if (indexB == g.nodes.size() - 1) {
+            g.nodes.remove(indexB);
+            g.nodes.add(1, b);
+        } else {
+            g.nodes.remove(indexB);
+            g.nodes.add(indexB + 1, b);
+        }
+    }
+
+    public static void hillClimbing(Graph g, int option) {
+        List<Point2D> intersection; // list of intersections
+        List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
+        boolean existNext = true; // checks if hillClimbing continues
+        int indexNext = -1; // index of next permutation
+        int maxOperation = Integer.MAX_VALUE;
+
+        Graph cur = g;
+
+        int count =0;
+
+        do {
+            visited.add(cur);
+            intersection = twoExchange(cur);
+
+            // Create possible sons
+            while (intersection.size() > 0) {
+                Point2D d = intersection.remove(3);
+                Point2D c = intersection.remove(2);
+                Point2D b = intersection.remove(1);
+                Point2D a = intersection.remove(0);
+
+                Graph tmp = new Graph(cur);
+
+                swap(tmp, a, b, c, d);
+                cur.sons.add(tmp);
+            }
+
+            if (option == 1) {
+                // Calculates perimeter
+                int curPerimeter = 0;
+                for (Graph a : cur.sons) {
+                    if (!visited.contains(a)) {
+                        curPerimeter = a.perimeter();
+                        if (curPerimeter < maxOperation) {
+                            maxOperation = curPerimeter;
+                            indexNext = cur.sons.indexOf(a);
+                        }
+                    }
+                }
+            }
+
+            else if (option == 2 || option == 4) {
+                if (cur.sons.size() > 0) {
+                    indexNext = 0;
+                    if (visited.contains(cur.sons.get(indexNext))) {
+                        indexNext = -1;
+                    }
+                }
+            }
+
+            else if (option == 3) {
+                int curOperation = 0;
+                for (Graph a : cur.sons) {
+                    if (!visited.contains(a)) {
+                        List<Point2D> tmp; // list of intersections
+                        tmp = twoExchange(a);
+                        curOperation = tmp.size();
+                        if (curOperation < maxOperation) {
+                            maxOperation = curOperation;
+                            indexNext = cur.sons.indexOf(a);
+                        }
+                    }
+                }
+            }
+
+            // Checks if hillClimbing can continue
+            if (indexNext == -1)
+                existNext = false;
+            else {
+                cur = cur.sons.get(indexNext);
+                existNext = true;
+                indexNext = -1;
+            }
+            count++;
+
+        } while (existNext);
+        System.out.println("Acabei ao fim de " + count +  " iterações");
+
+        printList(cur.nodes);
+
+    }
 }

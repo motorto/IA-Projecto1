@@ -10,21 +10,76 @@ import java.awt.geom.Point2D;
  */
 class Graph {
     List<Point2D> nodes; // list of nodes (order sorts)
+    List<Graph> sons; // list of possibleSons
 
     Graph() {
         this.nodes = new ArrayList<Point2D>();
+        this.sons = new ArrayList<Graph>();
     }
 
-    void addNewPoint(double x, double y) {
+    /*
+     * Copys the points to new graph
+     */
+    Graph(Graph g) {
+        this.nodes = new ArrayList<Point2D>(g.nodes);
+        this.sons = new ArrayList<Graph>();
+    }
+
+    boolean equals(Graph a) {
+        int count = 0;
+        if (a.nodes.size() != this.nodes.size())
+            return false;
+        if (a.nodes.size() == 0 && this.nodes.size() == 0)
+            return true;
+        while (count < this.nodes.size()) {
+            Point2D tmp = this.nodes.get(count);
+            Point2D tmp2 = a.nodes.get(count);
+            count++;
+            if ((tmp2.getX() == tmp.getX()) && (tmp2.getY() == tmp.getY())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * Calculates the perimeter of the graph
+     */
+    int perimeter() {
+        int answer = 0;
+        int count = 0;
+
+        while (count < nodes.size()) {
+            if (count == nodes.size() - 1) {
+                Point2D a = nodes.get(count++);
+                Point2D b = nodes.get(0);
+                answer += a.distance(b);
+            } else {
+                Point2D a = nodes.get(count++);
+                Point2D b = nodes.get(count++);
+                answer += a.distance(b);
+            }
+        }
+        return answer;
+    }
+
+    boolean addNewPoint(double x, double y) {
         Point2D tmp = new Point2D.Double(x, y);
-        System.out.println(tmp);
+
+        if (nodes.contains(tmp))
+            return false;
+
         nodes.add(tmp);
+        return true;
     }
 
-    void randomPointGenerator(int range) {
+    boolean randomPointGenerator(int range) {
         Random random = new Random();
         // (upperbound-lowerbound) + lowerbound;
-        addNewPoint((double) random.nextInt(range * 2) - range, (double) random.nextInt(range * 2) - range);
+        if (addNewPoint((double) random.nextInt(range * 2) - range, (double) random.nextInt(range * 2) - range))
+            return true;
+        else
+            return false;
     }
 
     void printGraph() {
@@ -54,16 +109,75 @@ public class solve {
         Graph g = new Graph();
 
         for (int i = 0; i < size; i++) {
-            g.randomPointGenerator(range);
+            if (!g.randomPointGenerator(range))
+                i--;
         }
 
-        g.randomPermutation();
+        int option = 0;
+        do {
+            System.out.println("--------------------");
+            System.out.println("0-Sair");
+            System.out.println("1-Imprimir Figura");
+            System.out.println("2-Permutação Random");
+            System.out.println("3-Permutação com Nearest Neighbour First");
+            System.out.println("4-Two-Exchange");
+            System.out.println("5-Hill Climbing");
+            System.out.println("--------------------");
 
-        g.printGraph();
+            option = scan.nextInt();
 
-        System.out.println("Searcing");
+            switch (option) {
+            case 0:
+                System.exit(0);
+                break;
+            case 1:
+                g.printGraph();
+                break;
+            case 2:
+                g.randomPermutation();
+                break;
+            case 3:
+                search.nearestNeighbourFirst(g);
+                break;
+            case 4:
+                for (Point2D tmp : search.twoExchange(g)) {
+                    g.printPoint(tmp);
+                }
+                break;
+            case 5:
+                System.out.println("--------------------");
+                System.out.println("Escolha uma das 4 opçoes:");
+                System.out.println("1-Menor Perimetro");
+                System.out.println("2-Primeiro Filho");
+                System.out.println("3-Menos confiltos de Arestas");
+                System.out.println("4-Qualquer candidato");
+                System.out.println("--------------------");
+                option = scan.nextInt();
+                switch (option) {
+                case 1:
+                    search.hillClimbing(g, 1);
+                    break;
+                case 2:
+                    search.hillClimbing(g, 2);
+                    break;
+                case 3:
+                    search.hillClimbing(g, 3);
+                    break;
+                case 4:
+                    search.hillClimbing(g, 4);
+                    break;
+                default:
+                    System.out.println("Opção Invalida");
+                    break;
+                }
 
-        search.nearestNeighbourFirst(g);
+                break;
+
+            default:
+                System.out.println("Opção Invalida");
+                break;
+            }
+        } while (option != 0);
 
         scan.close();
     }
