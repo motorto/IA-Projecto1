@@ -46,6 +46,10 @@ public class search {
         return ((c.getX() - a.getX()) * (b.getY() - a.getY()) - (b.getX() - a.getX()) * (c.getY() - a.getY()));
     }
 
+    /*
+     *  Checks if the segments Intersect
+     *  https://www.youtube.com/watch?v=R08OY6yDNy0
+     */
     private static boolean segmentsIntersect(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
         double dir1 = dir(p3, p4, p1);
         double dir2 = dir(p3, p4, p2);
@@ -68,12 +72,15 @@ public class search {
 
     private static boolean inBox(Point2D a, Point2D b, Point2D c) {
         if (((Math.min(a.getX(), b.getX())) <= c.getX() && (c.getX() <= Math.max(a.getX(), b.getX())))
-                && ((Math.min(a.getY(), b.getY()) < c.getY()) && (c.getY() <= Math.max(a.getY(), a.getY()))))
+                && ((Math.min(a.getY(), b.getY()) < c.getY()) && (c.getY() <= Math.max(a.getY(), b.getY()))))
             return true;
         else
             return false;
     }
 
+    /*
+     * Prints all the points from a given list
+     */
     public static void printList(List<Point2D> a) {
         for (Point2D K : a) {
             System.out.println("(" + K.getX() + ";" + K.getY() + ")");
@@ -117,6 +124,9 @@ public class search {
         return intersections;
     }
 
+    /*
+     * Swaps the vectors AB CD --> AC BD
+     */
     private static void swap(Graph g, Point2D a, Point2D b, Point2D c, Point2D d) {
         int indexB = g.nodes.indexOf(b);
         if (indexB == g.nodes.size() - 1) {
@@ -128,11 +138,16 @@ public class search {
         }
     }
 
+    /*
+     * Hill Climbing implementation
+     * (Not working properly)
+     */
     public static void hillClimbing(Graph g, int option) {
         List<Point2D> intersection; // list of intersections
         List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         boolean existNext = true; // checks if hillClimbing continues
         int indexNext = -1; // index of next permutation
+
         int maxOperation = Integer.MAX_VALUE;
 
         Graph cur = g;
@@ -170,7 +185,7 @@ public class search {
                 }
             }
 
-            else if (option == 2 || option == 4) {
+            else if (option == 2) {
                 if (cur.sons.size() > 0) {
                     indexNext = 0;
                     if (visited.contains(cur.sons.get(indexNext))) {
@@ -183,7 +198,7 @@ public class search {
                 int curOperation = 0;
                 for (Graph a : cur.sons) {
                     if (!visited.contains(a)) {
-                        List<Point2D> tmp; // list of intersections
+                        List<Point2D> tmp; // list of intersections of the possible son
                         tmp = twoExchange(a);
                         curOperation = tmp.size();
                         if (curOperation < maxOperation) {

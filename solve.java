@@ -140,8 +140,12 @@ public class solve {
                 search.nearestNeighbourFirst(g);
                 break;
             case 4:
+                int count = 1;
                 for (Point2D tmp : search.twoExchange(g)) {
                     g.printPoint(tmp);
+                    if (count % 4 == 0)
+                        System.out.println("-------------");
+                    count++;
                 }
                 break;
             case 5:
@@ -164,7 +168,8 @@ public class solve {
                     search.hillClimbing(g, 3);
                     break;
                 case 4:
-                    search.hillClimbing(g, 4);
+                    System.out.println("Ainda não foi implementado");
+                    // search.hillClimbing(g, 4);
                     break;
                 default:
                     System.out.println("Opção Invalida");
