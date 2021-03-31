@@ -125,7 +125,7 @@ public class search {
     }
 
     /*
-     * Swaps the vectors AB CD --> AC BD
+     * REVERT O ARRAY CASO ESPECIAL
      */
     private static void swap(Graph g, Point2D a, Point2D b, Point2D c, Point2D d) {
         int indexB = g.nodes.indexOf(b);
@@ -142,7 +142,15 @@ public class search {
      * Hill Climbing implementation
      * (Not working properly)
      */
+    // receives a function returns the next node
     public static void hillClimbing(Graph g, int option) {
+
+        /*
+        while (aindaHouverVizinho){
+            cur = cur.filhoEscolhido
+        }
+        */
+
         List<Point2D> intersection; // list of intersections
         List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         boolean existNext = true; // checks if hillClimbing continues
@@ -218,7 +226,6 @@ public class search {
                 indexNext = -1;
             }
             count++;
-
         } while (existNext);
         System.out.println("Acabei ao fim de " + count +  " iterações");
 
