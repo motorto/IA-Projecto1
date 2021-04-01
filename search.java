@@ -127,16 +127,22 @@ public class search {
     /*
      * Swaps the vectors AB CD --> AC BD
      */
-    private static void swap(Graph g, Point2D a, Point2D b, Point2D c, Point2D d) {
-        int indexB = g.nodes.indexOf(b);
-        if (indexB == g.nodes.size() - 1) {
-            g.nodes.remove(indexB);
-            g.nodes.add(1, b);
-        } else {
-            g.nodes.remove(indexB);
-            g.nodes.add(indexB + 1, b);
+      private static void swap(Graph g, Point2D a, Point2D b, Point2D c, Point2D d) {
+        int i = g.nodes.indexOf(b);
+        int j = g.nodes.indexOf(c);
+        Point2D tmp1;
+        Point2D tmp2;
+        while ( i < j ){
+            tmp1 = g.nodes.get(i);
+            tmp2 = g.nodes.get(j);
+            g.nodes.remove(i);
+            g.nodes.add(i,tmp2);
+            g.nodes.remove(j);
+            g.nodes.add(j,tmp1);
+            i++;
+            j--;
         }
-    }
+      }
 
     /*
      * Hill Climbing implementation
