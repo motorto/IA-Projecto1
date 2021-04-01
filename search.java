@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Random;
 import java.awt.geom.Point2D;
 
 public class search {
@@ -144,21 +144,78 @@ public class search {
     }
 
     /*
+     * Returns index of son with less perimeter
+     */
+    private static int perimeter(Graph g,List<Graph> visited) {
+        // Calculates perimeter
+        int maxPerimeter = Integer.MAX_VALUE;
+        int curPerimeter = 0;
+        int indexNext = -1;
+        for (Graph a : g.sons) {
+            if (!visited.contains(a)) {
+                curPerimeter = a.perimeter();
+                if (curPerimeter < maxPerimeter) {
+                    maxPerimeter= curPerimeter;
+                    indexNext = g.sons.indexOf(a);
+                }
+            }
+        }
+        return indexNext;
+    }
+
+    /*
+     * Returns index of first son
+     */
+    private static int firstSon(Graph g, List<Graph> visited) {
+        int indexNext = 0;
+        if (g.sons.size() > 0) {
+            if (visited.contains(g.sons.get(indexNext))) {
+                indexNext = -1;
+            }
+        }
+        return indexNext;
+    }
+
+    /*
+     * Returns index of son with less conflicts (by two exchange)
+     */
+    private static int lessConflits(Graph g, List<Graph> visited) {
+        int minConflit = Integer.MAX_VALUE;
+        int curOperation = 0;
+        int indexNext = -1;
+        for (Graph a : g.sons) {
+            if (!visited.contains(a)) {
+                List<Point2D> tmp; // list of intersections of the possible son
+                tmp = twoExchange(a);
+                curOperation = tmp.size();
+                if (curOperation < minConflit) {
+                    minConflit= curOperation;
+                    indexNext = g.sons.indexOf(a);
+                }
+            }
+        }
+        return indexNext;
+    }
+
+    /*
+     * Picks randomly the next son
+     */
+    private static int randomSon(Graph g, List<Graph> visited) {
+        Random random = new Random();
+        int indexNext = random.nextInt(g.sons.size());
+        return indexNext;
+    }
+
+    /*
      * Hill Climbing implementation (Not working properly)
      */
     // receives a function returns the next node
     public static void hillClimbing(Graph g, int option) {
 
-        /*
-         * while (aindaHouverVizinho){ cur = cur.filhoEscolhido }
-         */
-
         List<Point2D> intersection; // list of intersections
         List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
-        boolean existNext = true; // checks if hillClimbing continues
+        boolean existNext = true; // checks if hillClimbing can continue
         int indexNext = -1; // index of next permutation
-
-        int maxOperation = Integer.MAX_VALUE;
 
         Graph cur = g;
 
@@ -182,41 +239,19 @@ public class search {
             }
 
             if (option == 1) {
-                // Calculates perimeter
-                int curPerimeter = 0;
-                for (Graph a : cur.sons) {
-                    if (!visited.contains(a)) {
-                        curPerimeter = a.perimeter();
-                        if (curPerimeter < maxOperation) {
-                            maxOperation = curPerimeter;
-                            indexNext = cur.sons.indexOf(a);
-                        }
-                    }
-                }
+                indexNext = perimeter(g, visited);
             }
 
             else if (option == 2) {
-                if (cur.sons.size() > 0) {
-                    indexNext = 0;
-                    if (visited.contains(cur.sons.get(indexNext))) {
-                        indexNext = -1;
-                    }
-                }
+                indexNext = firstSon(g, visited);
             }
 
             else if (option == 3) {
-                int curOperation = 0;
-                for (Graph a : cur.sons) {
-                    if (!visited.contains(a)) {
-                        List<Point2D> tmp; // list of intersections of the possible son
-                        tmp = twoExchange(a);
-                        curOperation = tmp.size();
-                        if (curOperation < maxOperation) {
-                            maxOperation = curOperation;
-                            indexNext = cur.sons.indexOf(a);
-                        }
-                    }
-                }
+                indexNext = lessConflits(g, visited);
+            }
+            
+            else if (option == 4) {
+                indexNext = randomSon(g, visited);
             }
 
             // Checks if hillClimbing can continue
