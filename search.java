@@ -47,8 +47,7 @@ public class search {
     }
 
     /*
-     *  Checks if the segments Intersect
-     *  https://www.youtube.com/watch?v=R08OY6yDNy0
+     * Checks if the segments Intersect https://www.youtube.com/watch?v=R08OY6yDNy0
      */
     private static boolean segmentsIntersect(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
         double dir1 = dir(p3, p4, p1);
@@ -127,35 +126,32 @@ public class search {
     /*
      * REVERT O ARRAY CASO ESPECIAL
      */
-      private static void swap(Graph g, Point2D a, Point2D b, Point2D c, Point2D d) {
+    private static void swap(Graph g, Point2D a, Point2D b, Point2D c, Point2D d) {
         int i = g.nodes.indexOf(b);
         int j = g.nodes.indexOf(c);
         Point2D tmp1;
         Point2D tmp2;
-        while ( i < j ){
+        while (i < j) {
             tmp1 = g.nodes.get(i);
             tmp2 = g.nodes.get(j);
             g.nodes.remove(i);
-            g.nodes.add(i,tmp2);
+            g.nodes.add(i, tmp2);
             g.nodes.remove(j);
-            g.nodes.add(j,tmp1);
+            g.nodes.add(j, tmp1);
             i++;
             j--;
         }
-      }
+    }
 
     /*
-     * Hill Climbing implementation
-     * (Not working properly)
+     * Hill Climbing implementation (Not working properly)
      */
     // receives a function returns the next node
     public static void hillClimbing(Graph g, int option) {
 
         /*
-        while (aindaHouverVizinho){
-            cur = cur.filhoEscolhido
-        }
-        */
+         * while (aindaHouverVizinho){ cur = cur.filhoEscolhido }
+         */
 
         List<Point2D> intersection; // list of intersections
         List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
@@ -166,7 +162,7 @@ public class search {
 
         Graph cur = g;
 
-        int count =0;
+        int count = 0;
 
         do {
             visited.add(cur);
@@ -233,7 +229,7 @@ public class search {
             }
             count++;
         } while (existNext);
-        System.out.println("Acabei ao fim de " + count +  " iterações");
+        System.out.println("Acabei ao fim de " + count + " iterações");
 
         printList(cur.nodes);
 
