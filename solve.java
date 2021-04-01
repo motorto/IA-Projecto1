@@ -1,4 +1,5 @@
 import java.util.Scanner;
+
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +24,6 @@ class Graph {
     Graph(Graph g) {
         this.nodes = new ArrayList<Point2D>(g.nodes);
         this.sons = new ArrayList<Graph>();
-    }
-
-    boolean equals(Graph a) {
-        int count = 0;
-        if (a.nodes.size() != this.nodes.size())
-            return false;
-        if (a.nodes.size() == 0 && this.nodes.size() == 0)
-            return true;
-        while (count < this.nodes.size()) {
-            Point2D tmp = this.nodes.get(count);
-            Point2D tmp2 = a.nodes.get(count);
-            count++;
-            if ((tmp2.getX() == tmp.getX()) && (tmp2.getY() == tmp.getY())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /*
@@ -90,6 +74,23 @@ class Graph {
 
     void printPoint(Point2D point) {
         System.out.println("(" + point.getX() + ";" + point.getY() + ")");
+    }
+
+    /*
+     * Compares the permutation
+     */
+    boolean equals (Graph a) {
+        if (this.nodes.size() != a.nodes.size()) return false;
+
+        Point2D graph1;
+        Point2D graph2;
+        for (int i = 0; i < this.nodes.size() ; i++) {
+            graph1 = this.nodes.get(i);
+            graph2 = a.nodes.get(i);
+            if (graph1.getX() != graph2.getX() || graph1.getY() != graph2.getY() )
+                return false;
+        }
+        return true;
     }
 
     void randomPermutation() {

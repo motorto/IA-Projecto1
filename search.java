@@ -152,7 +152,7 @@ public class search {
         int curPerimeter = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            if (!visited.contains(a)) {
+            if (!alreadyExists(a,visited)) {
                 curPerimeter = a.perimeter();
                 if (curPerimeter < maxPerimeter) {
                     maxPerimeter= curPerimeter;
@@ -169,7 +169,7 @@ public class search {
     private static int firstSon(Graph g, List<Graph> visited) {
         int indexNext = 0;
         if (g.sons.size() > 0) {
-            if (visited.contains(g.sons.get(indexNext))) {
+            if (alreadyExists(g.sons.get(indexNext), visited)) {
                 indexNext = -1;
             }
         }
@@ -184,7 +184,7 @@ public class search {
         int curOperation = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            if (!visited.contains(a)) {
+            if (!alreadyExists(a, visited)) {
                 List<Point2D> tmp; // list of intersections of the possible son
                 tmp = twoExchange(a);
                 curOperation = tmp.size();
@@ -206,13 +206,38 @@ public class search {
         return indexNext;
     }
 
+    private static void generateSons(Graph g) {
+        List<Point2D> intersection; // list of intersections
+        intersection = twoExchange(g);
+
+        // Create possible sons
+        while (intersection.size() > 0) {
+            Point2D d = intersection.remove(3);
+            Point2D c = intersection.remove(2);
+            Point2D b = intersection.remove(1);
+            Point2D a = intersection.remove(0);
+
+            Graph tmp = new Graph(g);
+
+            swap(tmp, a, b, c, d);
+            g.sons.add(tmp);
+        }
+    }
+
+    private static boolean alreadyExists(Graph cur , List<Graph> visited){
+        for (Graph tmp : visited) {
+            if(cur.equals(tmp))
+                return true;
+        }
+        return false;
+    }
+
     /*
      * Hill Climbing implementation (Not working properly)
      */
     // receives a function returns the next node
     public static void hillClimbing(Graph g, int option) {
 
-        List<Point2D> intersection; // list of intersections
         List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         boolean existNext = true; // checks if hillClimbing can continue
         int indexNext = -1; // index of next permutation
@@ -223,35 +248,23 @@ public class search {
 
         do {
             visited.add(cur);
-            intersection = twoExchange(cur);
 
-            // Create possible sons
-            while (intersection.size() > 0) {
-                Point2D d = intersection.remove(3);
-                Point2D c = intersection.remove(2);
-                Point2D b = intersection.remove(1);
-                Point2D a = intersection.remove(0);
-
-                Graph tmp = new Graph(cur);
-
-                swap(tmp, a, b, c, d);
-                cur.sons.add(tmp);
-            }
+            generateSons(cur);
 
             if (option == 1) {
-                indexNext = perimeter(g, visited);
+                indexNext = perimeter(cur, visited);
             }
 
             else if (option == 2) {
-                indexNext = firstSon(g, visited);
+                indexNext = firstSon(cur, visited);
             }
 
             else if (option == 3) {
-                indexNext = lessConflits(g, visited);
+                indexNext = lessConflits(cur, visited);
             }
             
             else if (option == 4) {
-                indexNext = randomSon(g, visited);
+                indexNext = randomSon(cur, visited);
             }
 
             // Checks if hillClimbing can continue
@@ -263,7 +276,9 @@ public class search {
                 indexNext = -1;
             }
             count++;
+            System.out.println(count);
         } while (existNext);
+
         System.out.println("Acabei ao fim de " + count + " iterações");
 
         printList(cur.nodes);
