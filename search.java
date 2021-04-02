@@ -52,6 +52,28 @@ public class search {
     }
 
     /*
+     * Calculates the Scalar Product
+     */
+    private static double scalarProduct(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
+        return (p2.getX() - p1.getX() * p4.getX() - p3.getX()) + (p2.getY() - p1.getY() * p4.getY() - p3.getY());
+    }
+
+    /*
+     * Checks if array is collinear
+     * https://www.geeksforgeeks.org/program-check-three-points-collinear/
+     */
+    static boolean collinear(Point2D p1, Point2D p2, Point2D p3) {
+
+        double a = p1.getX() * (p2.getY() - p3.getY()) + p2.getX() * (p3.getY() - p1.getY())
+                + p3.getX() * (p1.getY() - p2.getY());
+
+        if (a == 0.0)
+            return true;
+        else
+            return false;
+    }
+
+    /*
      * Checks if the segments Intersect https://www.youtube.com/watch?v=R08OY6yDNy0
      */
     private static boolean segmentsIntersect(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
