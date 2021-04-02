@@ -52,13 +52,6 @@ public class search {
     }
 
     /*
-     * Calculates the Scalar Product
-     */
-    private static double scalarProduct(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
-        return (p2.getX() - p1.getX() * p4.getX() - p3.getX()) + (p2.getY() - p1.getY() * p4.getY() - p3.getY());
-    }
-
-    /*
      * Checks if array is collinear
      * https://www.geeksforgeeks.org/program-check-three-points-collinear/
      */
