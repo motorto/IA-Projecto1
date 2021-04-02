@@ -47,6 +47,21 @@ public class search {
     }
 
     /*
+     * Checks if array is collinear
+     * https://www.geeksforgeeks.org/program-check-three-points-collinear/
+     */
+    static boolean collinear(Point2D p1, Point2D p2, Point2D p3) {
+
+        double a = p1.getX() * (p2.getY() - p3.getY()) + p2.getX() * (p3.getY() - p1.getY())
+                + p3.getX() * (p1.getY() - p2.getY());
+
+        if (a == 0.0)
+            return true;
+        else
+            return false;
+    }
+
+    /*
      * Checks if the segments Intersect https://www.youtube.com/watch?v=R08OY6yDNy0
      */
     private static boolean segmentsIntersect(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
@@ -55,7 +70,11 @@ public class search {
         double dir3 = dir(p1, p2, p3);
         double dir4 = dir(p1, p2, p4);
 
-        if (((dir1 > 0 && dir2 < 0) || (dir1 < 0 && dir2 > 0)) && ((dir3 > 0 && dir4 < 0) || (dir3 < 0 && dir4 > 0)))
+        if (dir1 * dir2 < 0 && dir3 * dir4 < 0)
+            return true;
+        else if (collinear(p1, p2, p3))
+            return true;
+        else if (collinear(p1, p2, p4))
             return true;
         else if ((dir1 == 0) && inBox(p3, p4, p1))
             return true;
@@ -146,16 +165,16 @@ public class search {
     /*
      * Returns index of son with less perimeter
      */
-    private static int perimeter(Graph g,List<Graph> visited) {
+    private static int byPerimeter(Graph g, List<Graph> visited) {
         // Calculates perimeter
         int maxPerimeter = Integer.MAX_VALUE;
         int curPerimeter = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            if (!alreadyExists(a,visited)) {
+            if (!alreadyExists(a, visited)) {
                 curPerimeter = a.perimeter();
                 if (curPerimeter < maxPerimeter) {
-                    maxPerimeter= curPerimeter;
+                    maxPerimeter = curPerimeter;
                     indexNext = g.sons.indexOf(a);
                 }
             }
@@ -189,7 +208,7 @@ public class search {
                 tmp = twoExchange(a);
                 curOperation = tmp.size();
                 if (curOperation < minConflit) {
-                    minConflit= curOperation;
+                    minConflit = curOperation;
                     indexNext = g.sons.indexOf(a);
                 }
             }
@@ -224,9 +243,9 @@ public class search {
         }
     }
 
-    private static boolean alreadyExists(Graph cur , List<Graph> visited){
+    private static boolean alreadyExists(Graph cur, List<Graph> visited) {
         for (Graph tmp : visited) {
-            if(cur.equals(tmp))
+            if (cur.equals(tmp))
                 return true;
         }
         return false;
@@ -252,7 +271,7 @@ public class search {
             generateSons(cur);
 
             if (option == 1) {
-                indexNext = perimeter(cur, visited);
+                indexNext = byPerimeter(cur, visited);
             }
 
             else if (option == 2) {
@@ -262,7 +281,7 @@ public class search {
             else if (option == 3) {
                 indexNext = lessConflits(cur, visited);
             }
-            
+
             else if (option == 4) {
                 indexNext = randomSon(cur, visited);
             }
