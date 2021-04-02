@@ -79,15 +79,16 @@ class Graph {
     /*
      * Compares the permutation
      */
-    boolean equals (Graph a) {
-        if (this.nodes.size() != a.nodes.size()) return false;
+    boolean equals(Graph a) {
+        if (this.nodes.size() != a.nodes.size())
+            return false;
 
         Point2D graph1;
         Point2D graph2;
-        for (int i = 0; i < this.nodes.size() ; i++) {
+        for (int i = 0; i < this.nodes.size(); i++) {
             graph1 = this.nodes.get(i);
             graph2 = a.nodes.get(i);
-            if (graph1.getX() != graph2.getX() || graph1.getY() != graph2.getY() )
+            if (graph1.getX() != graph2.getX() || graph1.getY() != graph2.getY())
                 return false;
         }
         return true;
@@ -169,8 +170,7 @@ public class solve {
                     search.hillClimbing(g, 3);
                     break;
                 case 4:
-                    System.out.println("Ainda não foi implementado");
-                    // search.hillClimbing(g, 4);
+                    search.hillClimbing(g, 4);
                     break;
                 default:
                     System.out.println("Opção Invalida");
