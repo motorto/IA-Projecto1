@@ -47,6 +47,7 @@ class Graph {
         for (Point2D a : nodes) {
             printPoint(a);
         }
+        printPoint(this.nodes.get(0));
         System.out.println();
     }
 

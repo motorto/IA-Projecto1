@@ -4,6 +4,7 @@ import java.util.Random;
 import java.awt.geom.Point2D;
 
 public class search {
+
     public static void nearestNeighbourFirst(Graph g) {
         List<Point2D> visited = new ArrayList<Point2D>(); // list of visited nodes (visited)
         List<Point2D> path = new ArrayList<Point2D>(); // list of visited nodes (visited)
@@ -36,72 +37,61 @@ public class search {
     }
 
     /*
-     * Calculates the angle of AB to C
-     */
-    private static double dir(Point2D a, Point2D b, Point2D c) {
-        return ((b.getY() - a.getY()) * (c.getX() - b.getX()) - (b.getX() - a.getX()) * (c.getY() - b.getY()));
-    }
-
-    /*
      * Calculates the dot product
      */
-    private static double produtoVet(Point2D p1, Point2D p2, Point2D p3, Point2D p4){
-        Point2D x= new Point2D.Double(p2.getX()-p1.getX(),p2.getY()-p1.getY());
-        Point2D y= new Point2D.Double(p4.getX()-p3.getX(),p4.getY()-p3.getY());         
-        return (x.getX() * y.getX()) + (x.getY() * y.getY());     
+    private static double dotProduct(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
+        Point2D x = new Point2D.Double(p2.getX() - p1.getX(), p2.getY() - p1.getY());
+        Point2D y = new Point2D.Double(p4.getX() - p3.getX(), p4.getY() - p3.getY());
+        return (x.getX() * y.getX()) + (x.getY() * y.getY());
     }
 
     /*
-     * Checks if array is collinear
-     * https://www.geeksforgeeks.org/program-check-three-points-collinear/
+     * Check if a , lies on BC
      */
-    static boolean collinear(Point2D p1, Point2D p2, Point2D p3) {
-
-        double a = p1.getX() * (p2.getY() - p3.getY()) + p2.getX() * (p3.getY() - p1.getY())
-                + p3.getX() * (p1.getY() - p2.getY());
-
-        if (a == 0.0)
-            return true;
-        else
-            return false;
-    }
-
-    /*
-     * Checks if the segments Intersect https://www.youtube.com/watch?v=R08OY6yDNy0
-     */
-    private static boolean segmentsIntersect(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
-        double dir1 = dir(p3, p4, p1);
-        double dir2 = dir(p3, p4, p2);
-        double dir3 = dir(p1, p2, p3);
-        double dir4 = dir(p1, p2, p4);
-
-        if (dir1 * dir2 < 0 && dir3 * dir4 < 0) {
-            return true;
-        } 
-        // Checks if is collinear
-        if ((dir1 == 0 && dir2 == 0 && dir3 == 0 && dir4 == 0) && produtoVet(p1, p2, p3, p4) > 0) {
-            return true;
-        }
-        else if ((dir1 == 0) && inBox(p3, p4, p1)) {
-            return true;
-        } else if ((dir2 == 0) && inBox(p3, p4, p2)) {
-            return true;
-        } else if ((dir3 == 0) && inBox(p1, p2, p3)) {
-            return true;
-        } else if ((dir4 == 0) && inBox(p1, p2, p4)) {
-            return true;
-        } else
-            return false;
-    }
-
-    /*
-     * Check if intersects
-     * https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-     */
-    private static boolean inBox(Point2D a, Point2D b, Point2D c) {
+    static boolean inBox(Point2D a, Point2D b, Point2D c) {
         if (b.getX() <= Math.max(a.getX(), c.getX()) && b.getX() >= Math.min(a.getX(), c.getX())
                 && b.getY() <= Math.max(a.getY(), c.getY()) && b.getY() >= Math.min(a.getY(), c.getY()))
             return true;
+
+        return false;
+    }
+
+    /*
+     * To find orientation Returns orientation, 0)
+     * colinear , 1) Clockwise 2) CounterClockwise
+     */
+    static int dir(Point2D a, Point2D b, Point2D c) {
+        double val = (b.getY() - a.getY()) * (c.getX() - b.getX()) - (b.getX() - a.getX()) * (c.getY() - b.getY());
+
+        if (val == 0.0)
+            return 0;
+
+        return (val > 0) ? 1 : 2;
+    }
+
+    /*
+     * Checks if intersects
+     * https://www.youtube.com/watch?v=R08OY6yDNy0 
+     */
+    private static boolean segmentsIntersect(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
+        int dir1 = dir(p1, p2, p3);
+        int dir2 = dir(p1, p2, p4);
+        int dir3 = dir(p3, p4, p1);
+        int dir4 = dir(p3, p4, p2);
+
+        if (dir1 != dir2 && dir3 != dir4)
+            return true;
+        else if ((dir1 == 0 && dir2 == 0 && dir3 == 0 && dir4 == 0) && dotProduct(p1, p3, p3, p4) > 0)
+            return true;
+        else if (dir1 == 0 && inBox(p1, p3, p2))
+            return true;
+        else if (dir2 == 0 && inBox(p1, p4, p2))
+            return true;
+        else if (dir3 == 0 && inBox(p3, p1, p4))
+            return true;
+        else if (dir4 == 0 && inBox(p3, p2, p4))
+            return true;
+
         return false;
     }
 
@@ -217,7 +207,6 @@ public class search {
             swap(tmp, b, c);
             g.sons.add(tmp);
         }
-        System.out.println("done gerados");
     }
 
     /*
@@ -237,20 +226,19 @@ public class search {
         }
         if (indexNext == -1) {
             return -1;
-        }
-        else {
+        } else {
             return indexNext;
         }
     }
 
     /*
-     * Returns index of first son 
-     * (only if available)
+     * Returns index of first son (only if available)
      */
     private static int selectFirstSon(Graph g) {
         if (g.sons.size() > 0)
             return 0;
-        else return -1;
+        else
+            return -1;
     }
 
     /*
@@ -282,24 +270,21 @@ public class search {
         return -1;
     }
 
-    public static void hillClimbing(Graph cur,int option) {
-        boolean existNext = false; //check if hill climb can continue
+    public static void hillClimbing(Graph cur, int option) {
+        boolean existNext = false; // check if hill climb can continue
         int indexNext = -1; // index of son
         int count = 0;
 
         do {
             generateSons(cur);
 
-            if (option == 1){
+            if (option == 1) {
                 indexNext = selectSonPerimeter(cur);
-            }
-            else if (option == 2) {
+            } else if (option == 2) {
                 indexNext = selectFirstSon(cur);
-            }
-            else if (option == 3) {
+            } else if (option == 3) {
                 indexNext = selectSonLessConflits(cur);
-            }
-            else if (option == 4) {
+            } else if (option == 4) {
                 indexNext = selectSonRandom(cur);
             }
 
@@ -312,15 +297,15 @@ public class search {
                 System.out.println("************");
                 cur.printGraph();
                 System.out.println("************");
-            }
-            else {
+
+            } else {
                 existNext = false;
             }
-        }while(existNext == true);
+        } while (existNext == true);
 
-         System.out.println("-------- Acabei ---------");
-         System.out.println("Ao fim de " + count + " iterações");
-         System.out.println("-------- ---------");
-         cur.printGraph();
+        System.out.println("-------- Acabei ---------");
+        System.out.println("Ao fim de " + count + " iterações");
+        System.out.println("-------- ---------");
+        cur.printGraph();
     }
 }
