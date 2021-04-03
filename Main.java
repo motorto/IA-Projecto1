@@ -1,11 +1,12 @@
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.awt.geom.Point2D;
-
 
 class Graph {
     List<Point2D> nodes; // list of nodes (order sorts)
@@ -52,7 +53,7 @@ class Graph {
     }
 
     void printPoint(Point2D point) {
-        System.out.print("(" + (int)point.getX() + "," + (int)point.getY() + ") ");
+        System.out.print("(" + (int) point.getX() + "," + (int) point.getY() + ") ");
     }
 
     void randomPermutation() {
@@ -80,22 +81,61 @@ class Graph {
     }
 }
 
-public class Main{
+public class Main {
+
+    private static void createGui(Graph cur) {
+        JFrame f = new JFrame();
+        gui applet = new gui(cur);
+        f.add(applet);
+        f.pack();
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+    }
+
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         System.out.println("Insira o numero de nós.");
         int size = scan.nextInt();
         System.out.println("Insira o limite:");
         int range = scan.nextInt();
-
         Graph g = new Graph();
+
+        int option = 0;
+
+        System.out.println("1) Inserir pontos manualmente");
+        System.out.println("2) Inserir pontos aleatorios");
+        option = scan.nextInt();
+
+        switch (option) {
+            case 1:
+
+                int x,y;
+                x = 0;
+                y = 0;
+
+                for (int i = 0 ;i<size;i++) {
+                    x = scan.nextInt();
+                    y = scan.nextInt();
+                    if (!g.addNewPoint((double)x, (double)y)) {
+                        System.out.println("Ponto repetido!!!");
+                        i--;
+                    }
+                }
+
+                break;
+            case 2:
+                break;
+            default:
+                System.exit(0);
+                break;
+        }
 
         for (int i = 0; i < size; i++) {
             if (!g.randomPointGenerator(range))
                 i--;
         }
 
-        int option = 0;
+        option = 0;
         do {
             System.out.println("--------------------");
             System.out.println("0-Sair");
@@ -110,76 +150,82 @@ public class Main{
             option = scan.nextInt();
 
             switch (option) {
-                case 0:
-                    System.exit(0);
-                    break;
+            case 0:
+                System.exit(0);
+                break;
+            case 1:
+                g.printGraph();
+                createGui(g);
+                break;
+            case 2:
+                g.randomPermutation();
+                break;
+            case 3:
+                search.nearestNeighbourFirst(g);
+                break;
+            case 4:
+                int count = 1;
+                for (Point2D tmp : search.twoExchange(g)) {
+                    g.printPoint(tmp);
+                    if (count % 4 == 0)
+                        System.out.println("-------------");
+                    count++;
+                }
+                break;
+            case 5:
+                System.out.println("--------------------");
+                System.out.println("Escolha uma das 4 opçoes:");
+                System.out.println("1-Menor Perimetro");
+                System.out.println("2-Primeiro Filho");
+                System.out.println("3-Menos confiltos de Arestas");
+                System.out.println("4-Qualquer candidato");
+                System.out.println("--------------------");
+                option = scan.nextInt();
+                switch (option) {
                 case 1:
+                    g = search.hillClimbing(g, 1);
                     g.printGraph();
+                    createGui(g);
+                    System.out.println("-------- ---------");
                     break;
                 case 2:
-                    g.randomPermutation();
+                    g = search.hillClimbing(g, 2);
+                    g.printGraph();
+                    createGui(g);
+                    System.out.println("-------- ---------");
                     break;
                 case 3:
-                    search.nearestNeighbourFirst(g);
+                    g = search.hillClimbing(g, 3);
+                    g.printGraph();
+                    createGui(g);
+                    System.out.println("-------- ---------");
                     break;
                 case 4:
-                    int count = 1;
-                    for (Point2D tmp : search.twoExchange(g)) {
-                        g.printPoint(tmp);
-                        if (count % 4 == 0)
-                            System.out.println("-------------");
-                        count++;
-                    }
-                    break;
-                case 5:
-                    System.out.println("--------------------");
-                    System.out.println("Escolha uma das 4 opçoes:");
-                    System.out.println("1-Menor Perimetro");
-                    System.out.println("2-Primeiro Filho");
-                    System.out.println("3-Menos confiltos de Arestas");
-                    System.out.println("4-Qualquer candidato");
-                    System.out.println("--------------------");
-                    option = scan.nextInt();
-                    switch (option) {
-                    case 1:
-                        g=search.hillClimbing(g, 1);
-                        g.printGraph();
-                        System.out.println("-------- ---------");
-                        break;
-                    case 2:
-                        g=search.hillClimbing(g, 2);
-                        g.printGraph();
-                        System.out.println("-------- ---------");
-                        break;
-                    case 3:
-                        g=search.hillClimbing(g, 3);
-                        g.printGraph();
-                        System.out.println("-------- ---------");
-                        break;
-                    case 4:
-                        g=search.hillClimbing(g, 4);
-                        g.printGraph();
-                        System.out.println("-------- ---------");
-                        break;
-                    default:
-                        System.out.println("Opção Invalida");
-                        break;
-                    }
-                    break;
-                case 6:{
-                    g = search.simulatedAnnealing(g);
-                    System.out.println("-------- Acabei ---------");
-                    System.out.println("-------- ---------");
+                    g = search.hillClimbing(g, 4);
                     g.printGraph();
+                    createGui(g);
                     System.out.println("-------- ---------");
                     break;
-                }
                 default:
                     System.out.println("Opção Invalida");
                     break;
                 }
-            } while (option != 0);
+                break;
+            case 6: {
+                g = search.simulatedAnnealing(g);
+                System.out.println("-------- Acabei ---------");
+                System.out.println("-------- ---------");
+                g.printGraph();
+                createGui(g);
+                System.out.println("-------- ---------");
+                break;
+            }
+            default:
+                System.out.println("Opção Invalida");
+                break;
+            }
+        } while (option != 0);
 
-            scan.close();
-        }
+        scan.close();
     }
+}
