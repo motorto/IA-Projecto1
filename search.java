@@ -57,8 +57,8 @@ public class search {
     }
 
     /*
-     * To find orientation Returns orientation, 0)
-     * colinear , 1) Clockwise 2) CounterClockwise
+     * To find orientation Returns orientation, 0) colinear , 1) Clockwise 2)
+     * CounterClockwise
      */
     static int dir(Point2D a, Point2D b, Point2D c) {
         double val = (b.getY() - a.getY()) * (c.getX() - b.getX()) - (b.getX() - a.getX()) * (c.getY() - b.getY());
@@ -70,8 +70,7 @@ public class search {
     }
 
     /*
-     * Checks if intersects
-     * https://www.youtube.com/watch?v=R08OY6yDNy0 
+     * Checks if intersects https://www.youtube.com/watch?v=R08OY6yDNy0
      */
     private static boolean segmentsIntersect(Point2D p1, Point2D p2, Point2D p3, Point2D p4) {
         int dir1 = dir(p1, p2, p3);
@@ -192,8 +191,8 @@ public class search {
     }
 
     private static void generateSons(Graph g) {
-        List<Point2D> intersection; // list of intersections
-        intersection = twoExchange(g);
+        // list of intersections
+        List<Point2D> intersection = twoExchange(g);
 
         // Create possible sons
         while (intersection.size() > 0) {
@@ -241,6 +240,11 @@ public class search {
             return -1;
     }
 
+    private static int numberOfConficts(Graph g){
+        List<Point2D> tmp = twoExchange(g); // list of intersections of the possible son
+        return tmp.size();
+    }
+
     /*
      * Returns index of son with less conflicts (by two exchange)
      */
@@ -249,8 +253,7 @@ public class search {
         int curConflict = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            List<Point2D> tmp = twoExchange(a); // list of intersections of the possible son
-            curConflict = tmp.size();
+            curConflict = numberOfConficts(a);
             if (curConflict < minConflit) {
                 minConflit = curConflict;
                 indexNext = g.sons.indexOf(a);
@@ -270,7 +273,7 @@ public class search {
         return -1;
     }
 
-    public static void hillClimbing(Graph cur, int option) {
+    public static Graph hillClimbing(Graph cur, int option) {
         boolean existNext = false; // check if hill climb can continue
         int indexNext = -1; // index of son
         int count = 0;
@@ -293,11 +296,6 @@ public class search {
                 existNext = true;
                 indexNext = -1;
                 count++;
-                System.out.println(count);
-                System.out.println("************");
-                cur.printGraph();
-                System.out.println("************");
-
             } else {
                 existNext = false;
             }
@@ -305,7 +303,34 @@ public class search {
 
         System.out.println("-------- Acabei ---------");
         System.out.println("Ao fim de " + count + " iterações");
-        System.out.println("-------- ---------");
-        cur.printGraph();
+        return cur;
+    }
+
+
+    public static Graph simulatedAnnealing(Graph cur){
+        int temperature = 1000;
+        double coolingFactor = 0.95;
+        int deltaE;
+        int indexNext = -1;
+        double probability = 0;
+        for (int i = 0 ;  i < Integer.MAX_VALUE ; i++){
+            probability = Math.random();
+            generateSons(cur);
+            temperature*= coolingFactor;
+            if (temperature == 0 || cur.sons.size() == 0) {
+                return cur;
+            }
+            indexNext = selectSonRandom(cur);
+
+            deltaE = numberOfConficts(cur.sons.get(indexNext))  - numberOfConficts(cur);
+
+            if (deltaE > 0) {
+                cur = cur.sons.get(indexNext);
+            }
+            else if(Math.exp(deltaE / temperature) > probability) {
+                cur = cur.sons.get(indexNext);
+            }
+        }
+        return cur;
     }
 }

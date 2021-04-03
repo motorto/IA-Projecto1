@@ -104,6 +104,7 @@ public class Main{
             System.out.println("3-Permutação com Nearest Neighbour First");
             System.out.println("4-Two-Exchange");
             System.out.println("5-Hill Climbing");
+            System.out.println("6-Simulated Annealing");
             System.out.println("--------------------");
 
             option = scan.nextInt();
@@ -141,22 +142,38 @@ public class Main{
                     option = scan.nextInt();
                     switch (option) {
                     case 1:
-                        search.hillClimbing(g, 1);
+                        g=search.hillClimbing(g, 1);
+                        g.printGraph();
+                        System.out.println("-------- ---------");
                         break;
                     case 2:
-                        search.hillClimbing(g, 2);
+                        g=search.hillClimbing(g, 2);
+                        g.printGraph();
+                        System.out.println("-------- ---------");
                         break;
                     case 3:
-                        search.hillClimbing(g, 3);
+                        g=search.hillClimbing(g, 3);
+                        g.printGraph();
+                        System.out.println("-------- ---------");
                         break;
                     case 4:
-                        search.hillClimbing(g, 4);
+                        g=search.hillClimbing(g, 4);
+                        g.printGraph();
+                        System.out.println("-------- ---------");
                         break;
                     default:
                         System.out.println("Opção Invalida");
                         break;
                     }
                     break;
+                case 6:{
+                    g = search.simulatedAnnealing(g);
+                    System.out.println("-------- Acabei ---------");
+                    System.out.println("-------- ---------");
+                    g.printGraph();
+                    System.out.println("-------- ---------");
+                    break;
+                }
                 default:
                     System.out.println("Opção Invalida");
                     break;
