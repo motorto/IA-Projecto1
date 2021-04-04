@@ -1,9 +1,9 @@
 ## Compilação
 Foi desenvolvido em java (jre11)
 
-**Compilar**: javac solve.java
+**Compilar**: javac Main.java
 
-**Executar**: java solve 
+**Executar**: java Main 
 
 ## Utilização
 
@@ -14,15 +14,12 @@ Ao executar o programa , aparece um conjunto de opções, simplesmente seleciona
 - 1
 - 2
 - 3
-- 4 - (***incompleto***)
+- 4
+- 5
 
 ## Erros Conhecidos
 
-O hill climbing não parece estar a funcionar direito, para nenhuma das opções.
-O problema é provavelmente na maneira como verificamos os repetidos (visited) ou na 
-criação dos filhos (swap)
-
-Falta implementar o hill Climbing random(option4)
+...
 
 ### Grupo 30 , PL5
 
