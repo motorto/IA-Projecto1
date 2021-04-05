@@ -121,18 +121,16 @@ public class Main {
                         i--;
                     }
                 }
-
                 break;
             case 2:
+                for (int i = 0; i < size; i++) {
+                    if (!g.randomPointGenerator(range))
+                        i--;
+                }
                 break;
             default:
                 System.exit(0);
                 break;
-        }
-
-        for (int i = 0; i < size; i++) {
-            if (!g.randomPointGenerator(range))
-                i--;
         }
 
         option = 0;
