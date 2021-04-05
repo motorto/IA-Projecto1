@@ -211,16 +211,18 @@ public class search {
     /*
      * Returns index of son with less perimeter
      */
-    private static int selectSonPerimeter(Graph g) {
+    private static int selectSonPerimeter(Graph g,List<Graph> visited) {
         // Calculates perimeter
         double minPerimeter = Integer.MAX_VALUE;
         double curPerimeter = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            curPerimeter = a.perimeter();
-            if (curPerimeter < minPerimeter) {
-                minPerimeter = curPerimeter;
-                indexNext = g.sons.indexOf(a);
+            if (!visited.contains(a)) {
+                curPerimeter = a.perimeter();
+                if (curPerimeter < minPerimeter) {
+                    minPerimeter = curPerimeter;
+                    indexNext = g.sons.indexOf(a);
+                }
             }
         }
         if (indexNext == -1) {
@@ -233,8 +235,8 @@ public class search {
     /*
      * Returns index of first son (only if available)
      */
-    private static int selectFirstSon(Graph g) {
-        if (g.sons.size() > 0)
+    private static int selectFirstSon(Graph g,List<Graph> visited) {
+        if (g.sons.size() > 0 && !visited.contains(g.sons.get(0)))
             return 0;
         else
             return -1;
@@ -248,15 +250,17 @@ public class search {
     /*
      * Returns index of son with less conflicts (by two exchange)
      */
-    private static int selectSonLessConflits(Graph g) {
+    private static int selectSonLessConflits(Graph g,List<Graph> visited) {
         int minConflit = Integer.MAX_VALUE;
         int curConflict = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            curConflict = numberOfConficts(a);
-            if (curConflict < minConflit) {
-                minConflit = curConflict;
-                indexNext = g.sons.indexOf(a);
+            if (!visited.contains(a)) {
+                curConflict = numberOfConficts(a);
+                if (curConflict < minConflit) {
+                    minConflit = curConflict;
+                    indexNext = g.sons.indexOf(a);
+                }
             }
         }
         return indexNext;
@@ -265,30 +269,38 @@ public class search {
     /*
      * Returns index of a random son
      */
-    private static int selectSonRandom(Graph g) {
+    private static int selectSonRandom(Graph g,List<Graph> visited) {
+        int indexNext = -1;
         if (g.sons.size() > 0) {
             Random random = new Random();
-            return random.nextInt(g.sons.size());
+            while (true) {
+                indexNext = random.nextInt(g.sons.size());
+                if (!visited.contains(g.sons.get(indexNext))) {
+                    return indexNext;
+                }
+            }
         }
-        return -1;
+        return indexNext;
     }
 
     public static Graph hillClimbing(Graph cur, int option) {
+        List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         boolean existNext = false; // check if hill climb can continue
         int indexNext = -1; // index of son
         int count = 0;
 
         do {
+            visited.add(cur);
             generateSons(cur);
 
             if (option == 1) {
-                indexNext = selectSonPerimeter(cur);
+                indexNext = selectSonPerimeter(cur,visited);
             } else if (option == 2) {
-                indexNext = selectFirstSon(cur);
+                indexNext = selectFirstSon(cur,visited);
             } else if (option == 3) {
-                indexNext = selectSonLessConflits(cur);
+                indexNext = selectSonLessConflits(cur,visited);
             } else if (option == 4) {
-                indexNext = selectSonRandom(cur);
+                indexNext = selectSonRandom(cur,visited);
             }
 
             if (indexNext >= 0) {
@@ -308,6 +320,7 @@ public class search {
 
 
     public static Graph simulatedAnnealing(Graph cur){
+        List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         int temperature = 1000;
         double coolingFactor = 0.95;
         int deltaE;
@@ -315,12 +328,13 @@ public class search {
         double probability = 0;
         for (int i = 0 ;  i < Integer.MAX_VALUE ; i++){
             probability = Math.random();
+            visited.add(cur);
             generateSons(cur);
             temperature*= coolingFactor;
             if (temperature == 0 || cur.sons.size() == 0) {
                 return cur;
             }
-            indexNext = selectSonRandom(cur);
+            indexNext = selectSonRandom(cur,visited);
 
             deltaE = numberOfConficts(cur.sons.get(indexNext))  - numberOfConficts(cur);
 
