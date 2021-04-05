@@ -190,6 +190,9 @@ public class search {
         }
     }
 
+    /*
+     * Generate the candidates
+     */
     private static void generateSons(Graph g) {
         // list of intersections
         List<Point2D> intersection = twoExchange(g);
@@ -242,6 +245,9 @@ public class search {
             return -1;
     }
 
+    /*
+     * Returns number of conflicts
+     */
     private static int numberOfConficts(Graph g){
         List<Point2D> tmp = twoExchange(g); // list of intersections of the possible son
         return tmp.size();
@@ -283,7 +289,11 @@ public class search {
         return indexNext;
     }
 
+    /*
+     * Implements hill Climbing
+     */
     public static Graph hillClimbing(Graph cur, int option) {
+        final long startTime = System.nanoTime(); // to calculate Time
         List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         boolean existNext = false; // check if hill climb can continue
         int indexNext = -1; // index of son
@@ -313,13 +323,18 @@ public class search {
             }
         } while (existNext == true);
 
+        final long duration = System.nanoTime() - startTime;
         System.out.println("-------- Acabei ---------");
-        System.out.println("Ao fim de " + count + " iterações");
+        System.out.println("Ao fim de " + count + " iterações e " + duration + " nanosegundos");
         return cur;
     }
 
 
+    /*
+     * Implements the Simulated Annealing
+     */
     public static Graph simulatedAnnealing(Graph cur){
+        final long startTime = System.nanoTime(); // to calculate Time
         List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         int temperature = 1000;
         double coolingFactor = 0.95;
@@ -332,6 +347,9 @@ public class search {
             generateSons(cur);
             temperature*= coolingFactor;
             if (temperature == 0 || cur.sons.size() == 0) {
+                final long duration = System.nanoTime() - startTime;
+                System.out.println("-------- Acabei ---------");
+                System.out.println("Ao fim de " + duration + " nanosegundos");
                 return cur;
             }
             indexNext = selectSonRandom(cur,visited);
@@ -345,6 +363,9 @@ public class search {
                 cur = cur.sons.get(indexNext);
             }
         }
+        final long duration = System.nanoTime() - startTime;
+        System.out.println("-------- Acabei ---------");
+        System.out.println("Ao fim de " + duration + " nanosegundos");
         return cur;
     }
 }

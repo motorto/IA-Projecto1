@@ -10,7 +10,7 @@ import java.awt.geom.Point2D;
 
 class Graph {
     List<Point2D> nodes; // list of nodes (order sorts)
-    List<Graph> sons; // list of possibleSons
+    List<Graph> sons; // list of possible sons
 
     Graph() {
         this.nodes = new ArrayList<Point2D>();
@@ -18,7 +18,7 @@ class Graph {
     }
 
     /*
-     * Copys the points to new graph
+     * Copys the nodes to new graph
      */
     Graph(Graph g) {
         this.nodes = new ArrayList<Point2D>(g.nodes);
@@ -65,8 +65,7 @@ class Graph {
      */
     double perimeter() {
         double answer = 0;
-        Point2D a;
-        Point2D b;
+        Point2D a,b;
 
         for (int i = 1; i < this.nodes.size(); i++) {
             a = this.nodes.get(i - 1);
