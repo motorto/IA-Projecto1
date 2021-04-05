@@ -7,7 +7,7 @@ Foi desenvolvido em java (jre11)
 
 ## Utilização
 
-Ao executar o programa , aparece um conjunto de opções, simplesmente selecionar o numero correspondente.
+Ao executar o programa , aparece um conjunto de opções, simplesmente selecionar o número correspondente.
 
 ## Questões Resolvidas
 
@@ -19,7 +19,7 @@ Ao executar o programa , aparece um conjunto de opções, simplesmente seleciona
 
 ## Erros Conhecidos
 
-...
+- Os nossos algoritmos de pesquisa entram em loop para alguns casos.
 
 ### Grupo 30 , PL5
 
