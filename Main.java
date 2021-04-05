@@ -82,7 +82,7 @@ class Graph {
 
 public class Main {
 
-    private static void createGui(Graph cur) {
+    public static void createGui(Graph cur) {
         JFrame f = new JFrame();
         gui applet = new gui(cur);
         f.add(applet);
@@ -180,27 +180,31 @@ public class Main {
                 option = scan.nextInt();
                 switch (option) {
                 case 1:
-                    g = search.hillClimbing(g, 1);
-                    g.printGraph();
-                    createGui(g);
+                    search.hillClimbing(g, 1);
+                    // g = search.hillClimbing(g, 1);
+                    // g.printGraph();
+                    // createGui(g);
                     System.out.println("-------- ---------");
                     break;
                 case 2:
-                    g = search.hillClimbing(g, 2);
-                    g.printGraph();
-                    createGui(g);
+                    search.hillClimbing(g, 2);
+                    // g = search.hillClimbing(g, 2);
+                    // g.printGraph();
+                    // createGui(g);
                     System.out.println("-------- ---------");
                     break;
                 case 3:
-                    g = search.hillClimbing(g, 3);
-                    g.printGraph();
-                    createGui(g);
+                    search.hillClimbing(g, 3);
+                    // g = search.hillClimbing(g, 3);
+                    // g.printGraph();
+                    // createGui(g);
                     System.out.println("-------- ---------");
                     break;
                 case 4:
-                    g = search.hillClimbing(g, 4);
-                    g.printGraph();
-                    createGui(g);
+                    search.hillClimbing(g, 4);
+                    // g = search.hillClimbing(g, 4);
+                    // g.printGraph();
+                    // createGui(g);
                     System.out.println("-------- ---------");
                     break;
                 default:
@@ -209,11 +213,8 @@ public class Main {
                 }
                 break;
             case 6: {
-                g = search.simulatedAnnealing(g);
+                search.simulatedAnnealing(g);
                 System.out.println("-------- Acabei ---------");
-                System.out.println("-------- ---------");
-                g.printGraph();
-                createGui(g);
                 System.out.println("-------- ---------");
                 break;
             }

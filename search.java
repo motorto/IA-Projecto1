@@ -214,18 +214,16 @@ public class search {
     /*
      * Returns index of son with less perimeter
      */
-    private static int selectSonPerimeter(Graph g,List<Graph> visited) {
+    private static int selectSonPerimeter(Graph g) {
         // Calculates perimeter
         double minPerimeter = Integer.MAX_VALUE;
         double curPerimeter = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            if (!visited.contains(a)) {
-                curPerimeter = a.perimeter();
-                if (curPerimeter < minPerimeter) {
-                    minPerimeter = curPerimeter;
-                    indexNext = g.sons.indexOf(a);
-                }
+            curPerimeter = a.perimeter();
+            if (curPerimeter < minPerimeter) {
+                minPerimeter = curPerimeter;
+                indexNext = g.sons.indexOf(a);
             }
         }
         if (indexNext == -1) {
@@ -238,8 +236,8 @@ public class search {
     /*
      * Returns index of first son (only if available)
      */
-    private static int selectFirstSon(Graph g,List<Graph> visited) {
-        if (g.sons.size() > 0 && !visited.contains(g.sons.get(0)))
+    private static int selectFirstSon(Graph g) {
+        if (g.sons.size() > 0)
             return 0;
         else
             return -1;
@@ -256,17 +254,15 @@ public class search {
     /*
      * Returns index of son with less conflicts (by two exchange)
      */
-    private static int selectSonLessConflits(Graph g,List<Graph> visited) {
+    private static int selectSonLessConflits(Graph g) {
         int minConflit = Integer.MAX_VALUE;
         int curConflict = 0;
         int indexNext = -1;
         for (Graph a : g.sons) {
-            if (!visited.contains(a)) {
-                curConflict = numberOfConficts(a);
-                if (curConflict < minConflit) {
-                    minConflit = curConflict;
-                    indexNext = g.sons.indexOf(a);
-                }
+            curConflict = numberOfConficts(a);
+            if (curConflict < minConflit) {
+                minConflit = curConflict;
+                indexNext = g.sons.indexOf(a);
             }
         }
         return indexNext;
@@ -275,16 +271,12 @@ public class search {
     /*
      * Returns index of a random son
      */
-    private static int selectSonRandom(Graph g,List<Graph> visited) {
+    private static int selectSonRandom(Graph g) {
         int indexNext = -1;
         if (g.sons.size() > 0) {
             Random random = new Random();
-            while (true) {
-                indexNext = random.nextInt(g.sons.size());
-                if (!visited.contains(g.sons.get(indexNext))) {
-                    return indexNext;
-                }
-            }
+            indexNext = random.nextInt(g.sons.size());
+            return indexNext;
         }
         return indexNext;
     }
@@ -292,25 +284,23 @@ public class search {
     /*
      * Implements hill Climbing
      */
-    public static Graph hillClimbing(Graph cur, int option) {
+    public static void hillClimbing(Graph cur, int option) {
         final long startTime = System.nanoTime(); // to calculate Time
-        List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         boolean existNext = false; // check if hill climb can continue
         int indexNext = -1; // index of son
         int count = 0;
 
         do {
-            visited.add(cur);
             generateSons(cur);
 
             if (option == 1) {
-                indexNext = selectSonPerimeter(cur,visited);
+                indexNext = selectSonPerimeter(cur);
             } else if (option == 2) {
-                indexNext = selectFirstSon(cur,visited);
+                indexNext = selectFirstSon(cur);
             } else if (option == 3) {
-                indexNext = selectSonLessConflits(cur,visited);
+                indexNext = selectSonLessConflits(cur);
             } else if (option == 4) {
-                indexNext = selectSonRandom(cur,visited);
+                indexNext = selectSonRandom(cur);
             }
 
             if (indexNext >= 0) {
@@ -326,16 +316,16 @@ public class search {
         final long duration = System.nanoTime() - startTime;
         System.out.println("-------- Acabei ---------");
         System.out.println("Ao fim de " + count + " iterações e " + duration + " nanosegundos");
-        return cur;
+                Main.createGui(cur);
+                cur.printGraph();
     }
 
 
     /*
      * Implements the Simulated Annealing
      */
-    public static Graph simulatedAnnealing(Graph cur){
+    public static void simulatedAnnealing(Graph cur){
         final long startTime = System.nanoTime(); // to calculate Time
-        List<Graph> visited = new ArrayList<Graph>(); // list of visited permutations
         int temperature = 1000;
         double coolingFactor = 0.95;
         int deltaE;
@@ -343,16 +333,18 @@ public class search {
         double probability = 0;
         for (int i = 0 ;  i < Integer.MAX_VALUE ; i++){
             probability = Math.random();
-            visited.add(cur);
             generateSons(cur);
             temperature*= coolingFactor;
             if (temperature == 0 || cur.sons.size() == 0) {
                 final long duration = System.nanoTime() - startTime;
                 System.out.println("-------- Acabei ---------");
                 System.out.println("Ao fim de " + duration + " nanosegundos");
-                return cur;
+                Main.createGui(cur);
+                cur.printGraph();
+                return;
+                // return cur;
             }
-            indexNext = selectSonRandom(cur,visited);
+            indexNext = selectSonRandom(cur);
 
             deltaE = numberOfConficts(cur.sons.get(indexNext))  - numberOfConficts(cur);
 
@@ -366,6 +358,8 @@ public class search {
         final long duration = System.nanoTime() - startTime;
         System.out.println("-------- Acabei ---------");
         System.out.println("Ao fim de " + duration + " nanosegundos");
-        return cur;
+        Main.createGui(cur);
+        cur.printGraph();
+        // return cur;
     }
 }
